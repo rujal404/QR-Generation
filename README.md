@@ -21,7 +21,7 @@ project/
 ├── README.md
 │
 └── screenshots/
-    └── qrgen-preview.png
+    └── qrgen-preview.jpg
 ````
 
 ---
