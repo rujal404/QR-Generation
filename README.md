@@ -11,7 +11,7 @@ QRGen allows users to generate QR codes for **web links and Wi-Fi networks**, cu
 
 <!-- Replace this image with your actual screenshot -->
 
-![QRGen Screenshot](qrgen-preview.jpg)
+![QRGen](qrgen-preview.jpg)
 
 > **Tip:** Create a folder named `screenshots` in your project and place your screenshot inside it as `qrgen-preview.png`.
 
