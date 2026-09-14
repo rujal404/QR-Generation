@@ -9,7 +9,7 @@ QRGen allows users to generate QR codes for **web links and Wi-Fi networks**, cu
 
 ## 📸 Screenshot
 
-![QRGen Screenshot](screenshots/qrgen-preview.jpg)
+![](screenshots/qrgen-preview.jpg)
 
 
 Example:
@@ -26,28 +26,6 @@ project/
 
 ---
 
-## ✨ Features
-
-### 🔗 Link QR Code
-
-Generate a QR code from any website or URL.
-
-Example:
-
-If you enter:
-
-```text
-rujaltamrakar.com.np
-```
-
-the application automatically converts it to:
-
-```QR image
-
-![QRGen Screenshot](screenshots/qr-code.png)
-```
-
----
 
 ### 📶 Wi-Fi QR Code
 
