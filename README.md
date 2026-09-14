@@ -9,7 +9,7 @@ QRGen allows users to generate QR codes for **web links and Wi-Fi networks**, cu
 
 ## 📸 Screenshot
 
-![QRGen Screenshot](qrgen-preview.jpg)
+![QRGen Screenshot](screenshots/qrgen-preview.jpg)
 
 
 Example:
@@ -34,20 +34,17 @@ Generate a QR code from any website or URL.
 
 Example:
 
-```text
-https://example.com
-```
-
 If you enter:
 
 ```text
-example.com
+rujaltamrakar.com.np
 ```
 
 the application automatically converts it to:
 
-```text
-https://example.com
+```QR image
+
+![QRGen Screenshot](screenshots/qr-code.png)
 ```
 
 ---
@@ -238,7 +235,7 @@ Because the application is contained in a single HTML file, no build system is r
 ### 1. Download or clone the project
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/qrgen.git
+git clone https://github.com/rujal404/QR-Generation.git
 ```
 
 Then enter the project folder:
