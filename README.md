@@ -9,7 +9,7 @@ QRGen allows users to generate QR codes for **web links and Wi-Fi networks**, cu
 
 ## 📸 Screenshot
 
-![](screenshots/qr-code.png)
+![QRGen Screenshot](screenshots/qrgen-preview.jpg)
 
 
 Example:
