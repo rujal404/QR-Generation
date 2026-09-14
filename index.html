@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>QRGen - QR Code Generator</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.9.2/lib/qr-code-styling.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --black: #111111;
+      --gray: #6b7280;
+      --light-gray: #f3f4f6;
+      --border: #e5e7eb;
+      --red: #e60023;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+      background: #f7f7f8;
+      color: var(--black);
+
+      min-height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding: 30px 15px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1050px;
+
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    }
+
+    /* LEFT */
+
+    .intro {
+      background: #111111;
+      color: white;
+
+      padding: 55px 45px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 800;
+
+      margin-bottom: 55px;
+    }
+
+    .brand span {
+      color: var(--red);
+    }
+
+    .intro h1 {
+      font-size: 46px;
+      line-height: 1.05;
+      letter-spacing: -2px;
+
+      margin-bottom: 22px;
+    }
+
+    .intro p {
+      color: #bdbdbd;
+
+      font-size: 15px;
+      line-height: 1.7;
+
+      max-width: 360px;
+    }
+
+    .features {
+      margin-top: 35px;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 15px;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+
+      font-size: 14px;
+    }
+
+    .feature-icon {
+      width: 30px;
+      height: 30px;
+
+      border-radius: 50%;
+
+      background: #252525;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      margin-right: 12px;
+    }
+
+    /* RIGHT */
+
+    .generator {
+      padding: 45px;
+    }
+
+    .generator-header {
+      margin-bottom: 25px;
+    }
+
+    .generator-header h2 {
+      font-size: 27px;
+      margin-bottom: 7px;
+    }
+
+    .generator-header p {
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    /* TABS */
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+
+      background: var(--light-gray);
+
+      padding: 4px;
+
+      border-radius: 12px;
+
+      margin-bottom: 25px;
+    }
+
+    .tab {
+      border: none;
+      background: transparent;
+
+      padding: 12px;
+
+      border-radius: 9px;
+
+      font-size: 14px;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      color: var(--gray);
+    }
+
+    .tab.active {
+      background: white;
+      color: var(--black);
+
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+
+    /* FORM */
+
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      margin-bottom: 7px;
+    }
+
+    input,
+    select {
+      width: 100%;
+
+      border: 1px solid var(--border);
+
+      border-radius: 10px;
+
+      padding: 13px 14px;
+
+      font-size: 14px;
+
+      outline: none;
+
+      background: white;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #999;
+    }
+
+    /* COLOR */
+
+    .color-section {
+      margin-top: 5px;
+      margin-bottom: 20px;
+    }
+
+    .color-section > label {
+      display: block;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      margin-bottom: 10px;
+    }
+
+    .color-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #colorPicker {
+      width: 48px;
+      height: 42px;
+
+      padding: 3px;
+
+      border: 1px solid var(--border);
+
+      border-radius: 9px;
+
+      background: white;
+
+      cursor: pointer;
+    }
+
+    #colorValue {
+      flex: 1;
+
+      height: 42px;
+
+      border: 1px solid var(--border);
+
+      border-radius: 9px;
+
+      padding: 0 12px;
+
+      font-family: monospace;
+
+      font-size: 13px;
+
+      text-transform: uppercase;
+    }
+
+    .color-presets {
+      display: flex;
+      gap: 8px;
+
+      margin-top: 10px;
+
+      flex-wrap: wrap;
+    }
+
+    .color-preset {
+      width: 27px;
+      height: 27px;
+
+      border-radius: 50%;
+
+      border: 2px solid white;
+
+      outline: 1px solid #ddd;
+
+      cursor: pointer;
+
+      transition: 0.15s;
+    }
+
+    .color-preset:hover {
+      transform: scale(1.1);
+    }
+
+    .color-preset.selected {
+      outline: 2px solid #111;
+      outline-offset: 2px;
+    }
+
+    /* LOGO */
+
+    .logo-upload {
+      margin-bottom: 20px;
+    }
+
+    .logo-upload > label {
+      display: block;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      margin-bottom: 8px;
+    }
+
+    .logo-box {
+      border: 1px dashed #d1d5db;
+
+      border-radius: 12px;
+
+      padding: 12px;
+
+      display: flex;
+      align-items: center;
+
+      gap: 12px;
+
+      cursor: pointer;
+    }
+
+    .logo-placeholder {
+      width: 42px;
+      height: 42px;
+
+      border-radius: 8px;
+
+      background: #f3f4f6;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-size: 20px;
+    }
+
+    .logo-preview {
+      width: 42px;
+      height: 42px;
+
+      border-radius: 8px;
+
+      object-fit: contain;
+
+      border: 1px solid var(--border);
+
+      display: none;
+    }
+
+    .logo-text strong {
+      display: block;
+
+      font-size: 13px;
+
+      margin-bottom: 3px;
+    }
+
+    .logo-text span {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    #logoInput {
+      display: none;
+    }
+
+    /* GENERATE */
+
+    .generate-button {
+      width: 100%;
+
+      border: none;
+
+      background: #111111;
+      color: white;
+
+      padding: 14px;
+
+      border-radius: 10px;
+
+      font-size: 14px;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition: 0.2s;
+    }
+
+    .generate-button:hover {
+      background: #292929;
+      transform: translateY(-1px);
+    }
+
+    /* MESSAGE */
+
+    .message {
+      display: none;
+
+      margin-top: 12px;
+
+      padding: 10px;
+
+      border-radius: 8px;
+
+      background: #fff1f2;
+
+      color: #be123c;
+
+      font-size: 12px;
+
+      text-align: center;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    /* RESULT */
+
+    .result {
+      display: none;
+
+      margin-top: 28px;
+
+      padding-top: 28px;
+
+      border-top: 1px solid var(--border);
+
+      text-align: center;
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .result-title {
+      font-size: 15px;
+      font-weight: 700;
+
+      margin-bottom: 18px;
+    }
+
+    #qrContainer {
+      width: 290px;
+      height: 290px;
+
+      max-width: 100%;
+
+      margin: auto;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      background: white;
+
+      border-radius: 15px;
+
+      overflow: hidden;
+    }
+
+    /* ACTIONS */
+
+    .actions {
+      display: flex;
+
+      gap: 10px;
+
+      margin-top: 20px;
+    }
+
+    .action-button {
+      flex: 1;
+
+      padding: 12px;
+
+      border-radius: 9px;
+
+      border: none;
+
+      cursor: pointer;
+
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .download {
+      background: #111111;
+      color: white;
+    }
+
+    .copy {
+      background: #eeeeee;
+      color: #111111;
+    }
+
+    .footer {
+      text-align: center;
+
+      color: #9ca3af;
+
+      font-size: 11px;
+
+      margin-top: 22px;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 800px) {
+
+      body {
+        padding: 15px;
+      }
+
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .intro {
+        padding: 35px 30px;
+      }
+
+      .brand {
+        margin-bottom: 30px;
+      }
+
+      .intro h1 {
+        font-size: 36px;
+      }
+
+      .features {
+        display: none;
+      }
+
+      .generator {
+        padding: 30px 25px;
+      }
+    }
+
+    @media (max-width: 450px) {
+
+      .generator {
+        padding: 25px 18px;
+      }
+
+      .intro h1 {
+        font-size: 32px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      #qrContainer {
+        width: 260px;
+        height: 260px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <!-- LEFT -->
+
+    <section class="intro">
+
+      <div class="brand">
+        QR<span>Gen</span>
+      </div>
+
+      <h1>
+        Simple QR.<br>
+        Beautifully made.
+      </h1>
+
+      <p>
+        Create clean, professional QR codes
+        for websites and Wi-Fi networks.
+      </p>
+
+      <div class="features">
+
+        <div class="feature">
+          <div class="feature-icon">✓</div>
+          Custom QR colors
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">+</div>
+          Center logo
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">↓</div>
+          Download PNG
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- RIGHT -->
+
+    <section class="generator">
+
+      <div class="generator-header">
+
+        <h2>Create QR Code</h2>
+
+        <p>
+          Choose your QR type and customize it.
+        </p>
+
+      </div>
+
+
+      <!-- TABS -->
+
+      <div class="tabs">
+
+        <button
+          class="tab active"
+          id="linkTab"
+          onclick="switchType('link')"
+        >
+          🔗 Link
+        </button>
+
+        <button
+          class="tab"
+          id="wifiTab"
+          onclick="switchType('wifi')"
+        >
+          📶 Wi-Fi
+        </button>
+
+      </div>
+
+
+      <!-- LINK -->
+
+      <div
+        class="form-section active"
+        id="linkForm"
+      >
+
+        <div class="field">
+
+          <label for="url">
+            Website / Link
+          </label>
+
+          <input
+            type="text"
+            id="url"
+            placeholder="https://example.com"
+          >
+
+        </div>
+
+      </div>
+
+
+      <!-- WIFI -->
+
+      <div
+        class="form-section"
+        id="wifiForm"
+      >
+
+        <div class="field">
+
+          <label for="wifiName">
+            Wi-Fi Name / SSID
+          </label>
+
+          <input
+            type="text"
+            id="wifiName"
+            placeholder="My Wi-Fi"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="wifiPassword">
+            Password
+          </label>
+
+          <input
+            type="password"
+            id="wifiPassword"
+            placeholder="Wi-Fi password"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="wifiSecurity">
+            Security
+          </label>
+
+          <select id="wifiSecurity">
+
+            <option value="WPA">
+              WPA / WPA2 / WPA3
+            </option>
+
+            <option value="WEP">
+              WEP
+            </option>
+
+            <option value="nopass">
+              No Password
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="hiddenNetwork">
+            Hidden Network
+          </label>
+
+          <select id="hiddenNetwork">
+
+            <option value="false">
+              No
+            </option>
+
+            <option value="true">
+              Yes
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <!-- COLOR -->
+
+      <div class="color-section">
+
+        <label>
+          QR Color
+        </label>
+
+        <div class="color-controls">
+
+          <input
+            type="color"
+            id="colorPicker"
+            value="#111111"
+          >
+
+          <input
+            type="text"
+            id="colorValue"
+            value="#111111"
+            maxlength="7"
+          >
+
+        </div>
+
+
+        <div class="color-presets">
+
+          <button
+            class="color-preset selected"
+            style="background:#111111"
+            data-color="#111111"
+            onclick="selectColor('#111111', this)"
+            title="Black"
+          ></button>
+
+          <button
+            class="color-preset"
+            style="background:#E60023"
+            data-color="#E60023"
+            onclick="selectColor('#E60023', this)"
+            title="Red"
+          ></button>
+
+          <button
+            class="color-preset"
+            style="background:#2563EB"
+            data-color="#2563EB"
+            onclick="selectColor('#2563EB', this)"
+            title="Blue"
+          ></button>
+
+          <button
+            class="color-preset"
+            style="background:#16A34A"
+            data-color="#16A34A"
+            onclick="selectColor('#16A34A', this)"
+            title="Green"
+          ></button>
+
+          <button
+            class="color-preset"
+            style="background:#7C3AED"
+            data-color="#7C3AED"
+            onclick="selectColor('#7C3AED', this)"
+            title="Purple"
+          ></button>
+
+          <button
+            class="color-preset"
+            style="background:#EA580C"
+            data-color="#EA580C"
+            onclick="selectColor('#EA580C', this)"
+            title="Orange"
+          ></button>
+
+          <button
+            class="color-preset"
+            style="background:#0891B2"
+            data-color="#0891B2"
+            onclick="selectColor('#0891B2', this)"
+            title="Cyan"
+          ></button>
+
+        </div>
+
+      </div>
+
+
+      <!-- LOGO -->
+
+      <div class="logo-upload">
+
+        <label>
+          Center Logo
+        </label>
+
+        <label
+          class="logo-box"
+          for="logoInput"
+        >
+
+          <div
+            class="logo-placeholder"
+            id="logoPlaceholder"
+          >
+            +
+          </div>
+
+          <img
+            class="logo-preview"
+            id="logoPreview"
+          >
+
+          <div class="logo-text">
+
+            <strong>
+              Add your logo
+            </strong>
+
+            <span>
+              PNG, JPG or WEBP
+            </span>
+
+          </div>
+
+        </label>
+
+        <input
+          type="file"
+          id="logoInput"
+          accept="image/png,image/jpeg,image/webp"
+        >
+
+      </div>
+
+
+      <!-- GENERATE -->
+
+      <button
+        class="generate-button"
+        onclick="generateQR()"
+      >
+        Generate QR Code
+      </button>
+
+
+      <div
+        class="message"
+        id="message"
+      ></div>
+
+
+      <!-- RESULT -->
+
+      <div
+        class="result"
+        id="result"
+      >
+
+        <div class="result-title">
+          Your QR Code
+        </div>
+
+        <div id="qrContainer"></div>
+
+        <div class="actions">
+
+          <button
+            class="action-button download"
+            onclick="downloadQR()"
+          >
+            Download PNG
+          </button>
+
+          <button
+            class="action-button copy"
+            onclick="copyContent()"
+          >
+            Copy Content
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="footer">
+        QRGen · Simple QR Code Generator
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <script>
+
+    let currentType = "link";
+
+    let currentContent = "";
+
+    let logoData = null;
+
+    let qrCode = null;
+
+    let qrColor = "#111111";
+
+
+    /* =========================
+       TYPE SWITCH
+    ========================= */
+
+    function switchType(type) {
+
+      currentType = type;
+
+      document
+        .getElementById("linkTab")
+        .classList.toggle(
+          "active",
+          type === "link"
+        );
+
+      document
+        .getElementById("wifiTab")
+        .classList.toggle(
+          "active",
+          type === "wifi"
+        );
+
+      document
+        .getElementById("linkForm")
+        .classList.toggle(
+          "active",
+          type === "link"
+        );
+
+      document
+        .getElementById("wifiForm")
+        .classList.toggle(
+          "active",
+          type === "wifi"
+        );
+
+      hideMessage();
+    }
+
+
+    /* =========================
+       COLOR PICKER
+    ========================= */
+
+    const colorPicker =
+      document.getElementById(
+        "colorPicker"
+      );
+
+    const colorValue =
+      document.getElementById(
+        "colorValue"
+      );
+
+
+    colorPicker.addEventListener(
+      "input",
+      function() {
+
+        let color = this.value;
+
+        qrColor = color;
+
+        colorValue.value =
+          color.toUpperCase();
+
+        clearPresetSelection();
+
+      }
+    );
+
+
+    colorValue.addEventListener(
+      "input",
+      function() {
+
+        let value =
+          this.value.trim();
+
+        if (
+          /^#[0-9A-Fa-f]{6}$/.test(value)
+        ) {
+
+          qrColor = value;
+
+          colorPicker.value = value;
+
+          clearPresetSelection();
+
+        }
+
+      }
+    );
+
+
+    function selectColor(color, element) {
+
+      qrColor = color;
+
+      colorPicker.value = color;
+
+      colorValue.value =
+        color.toUpperCase();
+
+      clearPresetSelection();
+
+      element.classList.add("selected");
+
+    }
+
+
+    function clearPresetSelection() {
+
+      document
+        .querySelectorAll(".color-preset")
+        .forEach(button => {
+
+          button.classList.remove(
+            "selected"
+          );
+
+        });
+
+    }
+
+
+    /* =========================
+       LOGO
+    ========================= */
+
+    document
+      .getElementById("logoInput")
+      .addEventListener(
+        "change",
+        function(event) {
+
+          const file =
+            event.target.files[0];
+
+          if (!file) return;
+
+          const reader =
+            new FileReader();
+
+          reader.onload =
+            function(e) {
+
+              logoData =
+                e.target.result;
+
+              const preview =
+                document.getElementById(
+                  "logoPreview"
+                );
+
+              const placeholder =
+                document.getElementById(
+                  "logoPlaceholder"
+                );
+
+              preview.src =
+                logoData;
+
+              preview.style.display =
+                "block";
+
+              placeholder.style.display =
+                "none";
+
+            };
+
+          reader.readAsDataURL(file);
+
+        }
+      );
+
+
+    /* =========================
+       GET QR CONTENT
+    ========================= */
+
+    function getContent() {
+
+      if (currentType === "link") {
+
+        let url =
+          document
+            .getElementById("url")
+            .value
+            .trim();
+
+        if (!url) {
+
+          showMessage(
+            "Please enter a website URL."
+          );
+
+          return null;
+
+        }
+
+
+        if (
+          !url.startsWith("http://") &&
+          !url.startsWith("https://")
+        ) {
+
+          url =
+            "https://" + url;
+
+        }
+
+
+        try {
+
+          new URL(url);
+
+        } catch {
+
+          showMessage(
+            "Please enter a valid URL."
+          );
+
+          return null;
+
+        }
+
+
+        return url;
+
+      }
+
+
+      /* WIFI */
+
+      const ssid =
+        document
+          .getElementById("wifiName")
+          .value
+          .trim();
+
+      const password =
+        document
+          .getElementById("wifiPassword")
+          .value;
+
+      const security =
+        document
+          .getElementById("wifiSecurity")
+          .value;
+
+      const hidden =
+        document
+          .getElementById("hiddenNetwork")
+          .value;
+
+
+      if (!ssid) {
+
+        showMessage(
+          "Please enter your Wi-Fi name."
+        );
+
+        return null;
+
+      }
+
+
+      function escapeWifi(value) {
+
+        return value
+          .replace(/\\/g, "\\\\")
+          .replace(/;/g, "\\;")
+          .replace(/,/g, "\\,")
+          .replace(/:/g, "\\:")
+          .replace(/"/g, '\\"');
+
+      }
+
+
+      return (
+        "WIFI:" +
+        "T:" +
+        security +
+        ";" +
+        "S:" +
+        escapeWifi(ssid) +
+        ";" +
+        "P:" +
+        escapeWifi(password) +
+        ";" +
+        "H:" +
+        hidden +
+        ";;"
+      );
+
+    }
+
+
+    /* =========================
+       GENERATE
+    ========================= */
+
+    function generateQR() {
+
+      hideMessage();
+
+      const content =
+        getContent();
+
+      if (!content) return;
+
+      currentContent =
+        content;
+
+
+      const container =
+        document.getElementById(
+          "qrContainer"
+        );
+
+      container.innerHTML = "";
+
+
+      qrCode =
+        new QRCodeStyling({
+
+          width: 280,
+
+          height: 280,
+
+          type: "canvas",
+
+          data: content,
+
+
+          /* High correction for logo */
+
+          qrOptions: {
+
+            errorCorrectionLevel: "H"
+
+          },
+
+
+          /* QR DOTS */
+
+          dotsOptions: {
+
+            type: "rounded",
+
+            color: qrColor
+
+          },
+
+
+          /* CORNERS */
+
+          cornersSquareOptions: {
+
+            type: "extra-rounded",
+
+            color: qrColor
+
+          },
+
+
+          cornersDotOptions: {
+
+            type: "dot",
+
+            color: qrColor
+
+          },
+
+
+          /* WHITE BACKGROUND */
+
+          backgroundOptions: {
+
+            color: "#ffffff"
+
+          },
+
+
+          /* CENTER LOGO */
+
+          image:
+            logoData || undefined,
+
+          imageOptions: {
+
+            hideBackgroundDots: true,
+
+            imageSize: 0.22,
+
+            margin: 7,
+
+            crossOrigin: "anonymous"
+
+          }
+
+        });
+
+
+      qrCode.append(container);
+      document
+        .getElementById("result")
+        .classList.add("show");
+
+    }
+
+
+    /* =========================
+       DOWNLOAD
+    ========================= */
+
+    function downloadQR() {
+
+      if (!qrCode) return;
+
+      qrCode.download({
+
+        name: "qr-code",
+
+        extension: "png"
+
+      });
+
+    }
+
+
+    /* =========================
+       COPY
+    ========================= */
+
+    async function copyContent() {
+
+      if (!currentContent) return;
+
+      try {
+
+        await navigator.clipboard.writeText(
+          currentContent
+        );
+
+        const button =
+          document.querySelector(".copy");
+
+        button.innerText =
+          "Copied ✓";
+
+        setTimeout(() => {
+
+          button.innerText =
+            "Copy Content";
+
+        }, 1500);
+
+      } catch {
+
+        showMessage(
+          "Unable to copy content."
+        );
+
+      }
+
+    }
+
+
+    /* =========================
+       MESSAGE
+    ========================= */
+
+    function showMessage(text) {
+
+      const message =
+        document.getElementById(
+          "message"
+        );
+
+      message.innerText =
+        text;
+
+      message.classList.add(
+        "show"
+      );
+
+    }
+
+
+    function hideMessage() {
+
+      document
+        .getElementById("message")
+        .classList.remove(
+          "show"
+        );
+
+    }
+
+  </script>
+
+</body>
+</html>
